@@ -1,7 +1,7 @@
 ---
 services:
 platforms:
-author: azure
+author: ryancraw
 ---
 
 # documentdb-net-todo-app
