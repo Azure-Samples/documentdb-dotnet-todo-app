@@ -9,7 +9,7 @@ This sample shows you how to use the Microsoft Azure DocumentDB service to store
 
 ![My ToDo List ASP.NET application](./media/image1.png)
 
-For a complete end-to-end walk-through of creating this application, please the [full tutorial on the Azure documentation page](https://azure.microsoft.com/en-us/documentation/articles/documentdb-dotnet-application/)
+For a complete end-to-end walk-through of creating this application, please refer to the [full tutorial on the Azure documentation page](https://azure.microsoft.com/en-us/documentation/articles/documentdb-dotnet-application/)
 
 ## Running this sample
 
