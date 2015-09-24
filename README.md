@@ -22,13 +22,13 @@ For a complete end-to-end walk-through of creating this application, please refe
 
 3.From Visual Studio, open the **todo.sln** file from the root directory.
 
-4.In Visaul Studio Build menu, select **Build Solution** (or Press F6). 
+4.In Visual Studio Build menu, select **Build Solution** (or Press F6). 
 
 5.Retrieve the URI and PRIMARY KEY (or SECONDARY KEY) values from the Keys blade of your DocumentDB account in the Azure Preview portal. For more information on obtaining endpoint & keys for your DocumentDB account refer to [How to manage a DocumentDB account](https://azure.microsoft.com/en-us/documentation/articles/documentdb-manage-account/#keys)
 
 If you don't have an account, see [Create a DocumentDB database account](https://azure.microsoft.com/en-us/documentation/articles/documentdb-create-account/) to set one up.
 
-6.In the **Web.config** file, located in the project root, find and update the default values for **endpoint** and **authKey** and replace the placeholder values with the values obtained for your account.
+6.In the **Web.config** file, located in the project root, find **endpoint** and **authKey** and replace the placeholder values with the values obtained for your account.
 
 	<add key="endpoint" value="~enter URI for your DocumentDB Account, from Azure Preview portal~" /> 
 	<add key="authKey" value="~enter either Primary or Secondary key for your DocumentDB Account, from Azure Preview portal~" /> 
