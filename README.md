@@ -7,7 +7,7 @@ author: ryancrawcour
 # Web application development with ASP.NET MVC using DocumentDB
 This sample shows you how to use the Microsoft Azure DocumentDB service to store and access data from an ASP.NET MVC application hosted on Azure Websites. 
 
-![My ToDo List ASP.NET application](./media/image1.png)
+![My ToDo List ASP.NET application](https://raw.githubusercontent.com/Azure-Samples/documentdb-net-todo-app/master/media/image1.png)
 
 For a complete end-to-end walk-through of creating this application, please refer to the [full tutorial on the Azure documentation page](https://azure.microsoft.com/en-us/documentation/articles/documentdb-dotnet-application/)
 
