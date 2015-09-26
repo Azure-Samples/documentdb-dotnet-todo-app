@@ -7,8 +7,6 @@ author: ryancrawcour
 # Web application development with ASP.NET MVC using DocumentDB
 This sample shows you how to use the Microsoft Azure DocumentDB service to store and access data from an ASP.NET MVC application hosted on Azure Websites. 
 
-![My ToDo List ASP.NET application](https://raw.githubusercontent.com/Azure-Samples/documentdb-net-todo-app/master/media/image1.png)
-
 For a complete end-to-end walk-through of creating this application, please refer to the [full tutorial on the Azure documentation page](https://azure.microsoft.com/en-us/documentation/articles/documentdb-dotnet-application/)
 
 ## Running this sample
@@ -38,16 +36,12 @@ If you don't have an account, see [Create a DocumentDB database account](https:/
 ## Deploy this sample to Azure
 
 1. In Visual Studio Solution Explorer, right-click on the project name and select **Publish...**
-![Publish](./media/publish.png)
 
 2. Using the Publish Website dialog, select **Microsoft Azure Web Apps**
-3. ![Publish Website](./media/publish-2.png)
 
 3. In the next dialog, either select an existing web app, or follow the prompts to create a new web application. Note: If you choose to create a web application, the Web App Name chosen must be globally unique. 
-![SelectOrCreate](./media/publish-3.png)
- 
+
 4. Once you have selected the web app, click **Publish**
-![PublishApp](./media/publish-4.png)
 
 5. After a short time, Visual Studio will complete the deployment and open a browser with your deployed application. 
 
@@ -57,7 +51,6 @@ For additional ways to deploy this web application to Azure, please refer to the
 The code included in this sample is intended to get you going with a simple ASP.NET MVC application that connects to Azure DocumentDB. It is not intended to be a set of best practices on how to build scalable enterprise grade web applications. This is beyond the scope of this quick start sample. 
 
 ## More information
-
 
 - [Azure DocumentDB Documentation](https://azure.microsoft.com/en-us/documentation/services/documentdb/)
 - [Azure DocumentDB .NET SDK](https://www.nuget.org/packages/Microsoft.Azure.DocumentDB/)
