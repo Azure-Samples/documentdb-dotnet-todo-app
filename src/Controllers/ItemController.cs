@@ -1,31 +1,33 @@
 ﻿namespace todo.Controllers
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Models;
 
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed.")]
     public class ItemController : Controller
     {
-        public ActionResult Index()
+        [ActionName("Index")]
+        public async Task<ActionResult> IndexAsync()
         {
-            var items = DocumentDBRepository<Item>.GetItems(d => !d.Completed);
+            var items = await DocumentDBRepository<Item>.GetItemsAsync(d => !d.Completed);
             return View(items);
         }
-        public ActionResult Create()
+
+#pragma warning disable 1998
+        [ActionName("Create")]
+        public async Task<ActionResult> CreateAsync()
         {
             return View();
         }
-
+#pragma warning restore 1998
 
         [HttpPost]
-        // To protect against Cross-Site Request Forgery, validate that the anti-forgery token was received and is valid
-        // for more details on preventing see http://go.microsoft.com/fwlink/?LinkID=517254
+        [ActionName("Create")]
         [ValidateAntiForgeryToken]
-
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,Description,Completed")] Item item)
+        public async Task<ActionResult> CreateAsync([Bind(Include = "Id,Name,Description,Completed")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -36,16 +38,10 @@
             return View(item);
         }
 
-
         [HttpPost]
-
-        // To protect against Cross-Site Request Forgery, validate that the anti-forgery token was received and is valid
-        // for more details on preventing see http://go.microsoft.com/fwlink/?LinkID=517254
+        [ActionName("Edit")]
         [ValidateAntiForgeryToken]
-
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.        
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Description,Completed")] Item item)
+        public async Task<ActionResult> EditAsync([Bind(Include = "Id,Name,Description,Completed")] Item item)
         {
             if (ModelState.IsValid)
             {
@@ -56,14 +52,15 @@
             return View(item);
         }
 
-        public ActionResult Edit(string id)
+        [ActionName("Edit")]
+        public async Task<ActionResult> EditAsync(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Item item = DocumentDBRepository<Item>.GetItem(x => x.Id == id);
+            Item item = await DocumentDBRepository<Item>.GetItemAsync(id);
             if (item == null)
             {
                 return HttpNotFound();
@@ -72,14 +69,15 @@
             return View(item);
         }
 
-        public ActionResult Delete(string id)
+        [ActionName("Delete")]
+        public async Task<ActionResult> DeleteAsync(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Item item = DocumentDBRepository<Item>.GetItem(x => x.Id == id);
+            Item item = await DocumentDBRepository<Item>.GetItemAsync(id);
             if (item == null)
             {
                 return HttpNotFound();
@@ -88,22 +86,19 @@
             return View(item);
         }
 
-        [HttpPost, ActionName("Delete")]
-        // To protect against Cross-Site Request Forgery, validate that the anti-forgery token was received and is valid
-        // for more details on preventing see http://go.microsoft.com/fwlink/?LinkID=517254
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        public async Task<ActionResult> DeleteConfirmed([Bind(Include = "Id")] string id)
+        public async Task<ActionResult> DeleteConfirmedAsync([Bind(Include = "Id")] string id)
         {
             await DocumentDBRepository<Item>.DeleteItemAsync(id);
             return RedirectToAction("Index");
         }
 
-        public ActionResult Details (string id)
+        [ActionName("Details")]
+        public async Task<ActionResult> DetailsAsync(string id)
         {
-            Item item = DocumentDBRepository<Item>.GetItem(x => x.Id == id);
+            Item item = await DocumentDBRepository<Item>.GetItemAsync(id);
             return View(item);
         }
     }

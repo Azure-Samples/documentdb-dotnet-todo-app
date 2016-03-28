@@ -1,15 +1,12 @@
 ﻿@model IEnumerable<todo.Models.Item>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "List of To-Do Items";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>List of To-Do Items</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
@@ -44,3 +41,7 @@
 }
 
 </table>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>

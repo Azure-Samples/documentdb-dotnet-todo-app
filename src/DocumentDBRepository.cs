@@ -1,5 +1,4 @@
-﻿
-namespace todo
+﻿namespace todo
 {
     using System;
     using System.Collections.Generic;
@@ -10,153 +9,110 @@ namespace todo
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
-
-    public static class DocumentDBRepository<T>
-    {       
-        private static string databaseId;
-        private static String DatabaseId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(databaseId))
-                {
-
-                    databaseId = ConfigurationManager.AppSettings["database"];
-                }
-
-                return databaseId;
-            }
-        }
-
-        private static string collectionId;
-        private static String CollectionId
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(collectionId))
-                {
-
-                    collectionId = ConfigurationManager.AppSettings["collection"];
-                }
-
-                return collectionId;
-            }
-        }
-
-        private static Database database;
-        private static Database Database
-        {
-            get
-            {
-                if (database == null)
-                {
-
-                    database = ReadOrCreateDatabase();
-                }
-
-                return database;
-            }
-        }
-
-        private static DocumentCollection collection;
-        private static DocumentCollection Collection
-        {
-            get
-            {
-                if (collection == null)
-                {
-                    collection = ReadOrCreateCollection(Database.SelfLink);
-                }
-
-                return collection;
-            }
-        }
-
+    public static class DocumentDBRepository<T> where T : class
+    {
+        private static readonly string DatabaseId = ConfigurationManager.AppSettings["database"];
+        private static readonly string CollectionId = ConfigurationManager.AppSettings["collection"];
         private static DocumentClient client;
-        private static DocumentClient Client
+
+        public static async Task<T> GetItemAsync(string id)
         {
-            get
+            try
             {
-                if (client == null)
+                Document document = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+                return (T)(dynamic)document;
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    string endpoint = ConfigurationManager.AppSettings["endpoint"];
-                    string authKey = ConfigurationManager.AppSettings["authKey"];
-                    Uri endpointUri = new Uri(endpoint);
-                    client = new DocumentClient(endpointUri, authKey);
+                    return null;
                 }
-
-                return client;
+                else
+                {
+                    throw;
+                }
             }
         }
 
-        private static DocumentCollection ReadOrCreateCollection(string databaseLink)
+        public static async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
         {
-            var col = Client.CreateDocumentCollectionQuery(databaseLink)
-                              .Where(c => c.Id == CollectionId)
-                              .AsEnumerable()
-                              .FirstOrDefault();
+            IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
+                UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId),
+                new FeedOptions { MaxItemCount = -1 })
+                .Where(predicate)
+                .AsDocumentQuery();
 
-            if (col == null)
+            List<T> results = new List<T>();
+            while (query.HasMoreResults)
             {
-                col = Client.CreateDocumentCollectionAsync(databaseLink, new DocumentCollection { Id = CollectionId }).Result;
+                results.AddRange(await query.ExecuteNextAsync<T>());
             }
 
-            return col;
-        }
-
-        private static Database ReadOrCreateDatabase()
-        {
-            var db = Client.CreateDatabaseQuery()
-                            .Where(d => d.Id == DatabaseId)
-                            .AsEnumerable()
-                            .FirstOrDefault();
-
-            if (db == null)
-            {
-                db = Client.CreateDatabaseAsync(new Database { Id = DatabaseId }).Result;
-            }
-
-            return db;
+            return results;
         }
 
         public static async Task<Document> CreateItemAsync(T item)
         {
-            return await Client.CreateDocumentAsync(Collection.SelfLink, item);
-        }
-
-        public static T GetItem(Expression<Func<T, bool>> predicate)
-        {
-            return Client.CreateDocumentQuery<T>(Collection.DocumentsLink)
-                        .Where(predicate)
-                        .AsEnumerable()
-                        .FirstOrDefault();
-        }
-
-        public static IEnumerable<T> GetItems(Expression<Func<T, bool>> predicate)
-        {
-            return Client.CreateDocumentQuery<T>(Collection.DocumentsLink)
-                        .Where(predicate)
-                        .AsEnumerable();
-        }
-
-        public static Document GetDocument(string id)
-        {
-            return Client.CreateDocumentQuery(Collection.DocumentsLink)
-                                .Where(d => d.Id == id)
-                                .AsEnumerable()
-                                .FirstOrDefault();
+            return await client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), item);
         }
 
         public static async Task<Document> UpdateItemAsync(string id, T item)
         {
-            Document doc = GetDocument(id);
-            return await Client.ReplaceDocumentAsync(doc.SelfLink, item);
+            return await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), item);
         }
 
         public static async Task DeleteItemAsync(string id)
         {
-            Document doc = GetDocument(id);
-            await client.DeleteDocumentAsync(doc.SelfLink);
+            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+        }
+
+        public static void Initialize()
+        {
+            client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"]);
+            CreateDatabaseIfNotExistsAsync().Wait();
+            CreateCollectionIfNotExistsAsync().Wait();
+        }
+
+        private static async Task CreateDatabaseIfNotExistsAsync()
+        {
+            try
+            {
+                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await client.CreateDatabaseAsync(new Database { Id = DatabaseId });
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private static async Task CreateCollectionIfNotExistsAsync()
+        {
+            try
+            {
+                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await client.CreateDocumentCollectionAsync(
+                        UriFactory.CreateDatabaseUri(DatabaseId),
+                        new DocumentCollection { Id = CollectionId },
+                        new RequestOptions { OfferThroughput = 1000 });
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

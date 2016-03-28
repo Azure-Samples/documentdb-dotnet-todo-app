@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-
-namespace todo.Controllers
+﻿namespace todo.Controllers
 {
+    using System.Diagnostics.CodeAnalysis;
+    using System.Web.Mvc;
+
+    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed.")]
     public class HomeController : Controller
     {
         public ActionResult Index()
