@@ -1,12 +1,10 @@
 ﻿namespace todo.Controllers
 {
-    using System.Diagnostics.CodeAnalysis;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web.Mvc;
     using Models;
 
-    [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed.")]
     public class ItemController : Controller
     {
         [ActionName("Index")]

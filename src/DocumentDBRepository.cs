@@ -9,6 +9,7 @@
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
+
     public static class DocumentDBRepository<T> where T : class
     {
         private static readonly string DatabaseId = ConfigurationManager.AppSettings["database"];
