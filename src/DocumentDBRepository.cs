@@ -16,11 +16,15 @@
         private static readonly string CollectionId = ConfigurationManager.AppSettings["collection"];
         private static DocumentClient client;
 
+
         public static async Task<T> GetItemAsync(string id)
         {
             try
             {
-                Document document = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+                Document document = await client.ReadDocumentAsync(
+                    UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id),
+                        new RequestOptions { PartitionKey = new PartitionKey("personal") }
+                );
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e)
@@ -40,7 +44,7 @@
         {
             IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId),
-                new FeedOptions { MaxItemCount = -1 })
+                new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true })
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -65,7 +69,10 @@
 
         public static async Task DeleteItemAsync(string id)
         {
-            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+            await client.DeleteDocumentAsync(
+                UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id),
+                 new RequestOptions { PartitionKey = new PartitionKey("personal") }
+                 );
         }
 
         public static void Initialize()
@@ -107,7 +114,7 @@
                     await client.CreateDocumentCollectionAsync(
                         UriFactory.CreateDatabaseUri(DatabaseId),
                         new DocumentCollection { Id = CollectionId },
-                        new RequestOptions { OfferThroughput = 1000 });
+                        new RequestOptions { OfferThroughput = 400 });
                 }
                 else
                 {
