@@ -8,6 +8,9 @@
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
+        [JsonProperty(PropertyName = "category")]
+        public string Category = "personal";
+
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
