@@ -21,6 +21,14 @@
         <dd>
             @Html.DisplayFor(model => model.Description)
         </dd>
+        
+        <dt>
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        
+        <dd>
+            @Html.DisplayFor(model => model.Category)
+        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.Completed)
@@ -33,6 +41,6 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id, category=Model.Category }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
