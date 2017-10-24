@@ -1,4 +1,6 @@
-﻿namespace todo
+﻿using todo.Models;
+
+namespace todo
 {
     using System;
     using System.Collections.Generic;
@@ -16,11 +18,13 @@
         private static readonly string CollectionId = ConfigurationManager.AppSettings["collection"];
         private static DocumentClient client;
 
-        public static async Task<T> GetItemAsync(string id)
+        public static async Task<T> GetItemAsync(string id, string category)
         {
             try
             {
-                Document document = await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+                Document document =
+                    await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id),
+                        new RequestOptions() {PartitionKey = new PartitionKey(category)});
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e)
@@ -40,7 +44,7 @@
         {
             IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId),
-                new FeedOptions { MaxItemCount = -1 })
+                new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true})
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -63,9 +67,9 @@
             return await client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), item);
         }
 
-        public static async Task DeleteItemAsync(string id)
+        public static async Task DeleteItemAsync(string id, string category)
         {
-            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions(){PartitionKey = new PartitionKey(category)});
         }
 
         public static void Initialize()
