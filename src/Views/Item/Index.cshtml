@@ -16,6 +16,9 @@
             @Html.DisplayNameFor(model => model.Description)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Completed)
         </th>
         <th></th>
@@ -28,6 +31,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Category)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Completed)
