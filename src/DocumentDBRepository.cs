@@ -11,6 +11,7 @@ namespace todo
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
+    using System.Collections.ObjectModel;
 
     public static class DocumentDBRepository<T> where T : class
     {
@@ -110,7 +111,11 @@ namespace todo
                 {
                     await client.CreateDocumentCollectionAsync(
                         UriFactory.CreateDatabaseUri(DatabaseId),
-                        new DocumentCollection { Id = CollectionId },
+                        new DocumentCollection
+                            {
+                                Id = CollectionId,
+                                PartitionKey = new PartitionKeyDefinition() { Paths = new Collection<string>() { "/category" } }
+                            },
                         new RequestOptions { OfferThroughput = 1000 });
                 }
                 else
