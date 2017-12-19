@@ -25,7 +25,7 @@ namespace todo
             {
                 Document document =
                     await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id),
-                        new RequestOptions() {PartitionKey = new PartitionKey(category)});
+                        new RequestOptions() { PartitionKey = new PartitionKey(category) });
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e)
@@ -45,7 +45,7 @@ namespace todo
         {
             IDocumentQuery<T> query = client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId),
-                new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true})
+                new FeedOptions { MaxItemCount = -1, EnableCrossPartitionQuery = true })
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -70,59 +70,24 @@ namespace todo
 
         public static async Task DeleteItemAsync(string id, string category)
         {
-            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions(){PartitionKey = new PartitionKey(category)});
+            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions() { PartitionKey = new PartitionKey(category) });
         }
 
         public static void Initialize()
         {
+            Init().Wait();
+        }
+
+        private static async Task<ResourceResponse<DocumentCollection>> Init()
+        {
             client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"]);
-            CreateDatabaseIfNotExistsAsync().Wait();
-            CreateCollectionIfNotExistsAsync().Wait();
-        }
-
-        private static async Task CreateDatabaseIfNotExistsAsync()
-        {
-            try
-            {
-                await client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(DatabaseId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    await client.CreateDatabaseAsync(new Database { Id = DatabaseId });
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private static async Task CreateCollectionIfNotExistsAsync()
-        {
-            try
-            {
-                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    await client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(DatabaseId),
-                        new DocumentCollection
-                            {
-                                Id = CollectionId,
-                                PartitionKey = new PartitionKeyDefinition() { Paths = new Collection<string>() { "/category" } }
-                            },
-                        new RequestOptions { OfferThroughput = 1000 });
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            Database database = new Database { Id = DatabaseId };
+            database = await client.CreateDatabaseIfNotExistsAsync(database);
+            DocumentCollection documentCollection = new DocumentCollection {
+                Id = CollectionId,
+                PartitionKey = new PartitionKeyDefinition() { Paths = new Collection<string>() { "/category" } }
+            };
+            return await client.CreateDocumentCollectionIfNotExistsAsync(database.SelfLink, documentCollection);
         }
     }
 }
