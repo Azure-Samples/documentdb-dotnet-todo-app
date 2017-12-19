@@ -83,7 +83,10 @@ namespace todo
             client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"]);
             Database database = new Database { Id = DatabaseId };
             database = await client.CreateDatabaseIfNotExistsAsync(database);
-            DocumentCollection documentCollection = new DocumentCollection { Id = CollectionId };
+            DocumentCollection documentCollection = new DocumentCollection {
+                Id = CollectionId,
+                PartitionKey = new PartitionKeyDefinition() { Paths = new Collection<string>() { "/category" } }
+            };
             return await client.CreateDocumentCollectionIfNotExistsAsync(database.SelfLink, documentCollection);
         }
     }
