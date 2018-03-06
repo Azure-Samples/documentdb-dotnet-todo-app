@@ -1,4 +1,4 @@
-﻿using todo.Models;
+using todo.Models;
 
 namespace todo
 {
@@ -11,7 +11,6 @@ namespace todo
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
-    using System.Collections.ObjectModel;
 
     public static class DocumentDBRepository<T> where T : class
     {
@@ -24,8 +23,7 @@ namespace todo
             try
             {
                 Document document =
-                    await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id),
-                        new RequestOptions() {PartitionKey = new PartitionKey(category)});
+                    await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e)
@@ -70,7 +68,7 @@ namespace todo
 
         public static async Task DeleteItemAsync(string id, string category)
         {
-            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions(){PartitionKey = new PartitionKey(category)});
+            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
         }
 
         public static void Initialize()
@@ -113,10 +111,9 @@ namespace todo
                         UriFactory.CreateDatabaseUri(DatabaseId),
                         new DocumentCollection
                             {
-                                Id = CollectionId,
-                                PartitionKey = new PartitionKeyDefinition() { Paths = new Collection<string>() { "/category" } }
+                                Id = CollectionId
                             },
-                        new RequestOptions { OfferThroughput = 1000 });
+                        new RequestOptions { OfferThroughput = 400 });
                 }
                 else
                 {
