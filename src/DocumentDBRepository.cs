@@ -78,6 +78,18 @@ namespace todo
             CreateCollectionIfNotExistsAsync().Wait();
         }
 
+        public static void Initialize(string endpoint, string authKey)
+        {
+            client = new DocumentClient(new Uri(endpoint), authKey);
+            CreateDatabaseIfNotExistsAsync().Wait();
+            CreateCollectionIfNotExistsAsync().Wait();
+        }
+
+        public static void Teardown()
+        {
+            DeleteDatabaseAsync().Wait();
+        }
+
         private static async Task CreateDatabaseIfNotExistsAsync()
         {
             try
@@ -120,6 +132,11 @@ namespace todo
                     throw;
                 }
             }
+        }
+
+        private static async Task DeleteDatabaseAsync()
+        {
+            await client.DeleteDatabaseAsync((UriFactory.CreateDatabaseUri(DatabaseId)));
         }
     }
 }
