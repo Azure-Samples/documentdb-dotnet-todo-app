@@ -23,7 +23,7 @@ namespace todo
             try
             {
                 Document document =
-                    await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+                    await client.ReadDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions { PartitionKey = new PartitionKey(category) });
                 return (T)(dynamic)document;
             }
             catch (DocumentClientException e)
@@ -68,7 +68,7 @@ namespace todo
 
         public static async Task DeleteItemAsync(string id, string category)
         {
-            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id));
+            await client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(DatabaseId, CollectionId, id), new RequestOptions { PartitionKey = new PartitionKey(category) });
         }
 
         public static void Initialize()
