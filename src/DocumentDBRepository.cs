@@ -75,14 +75,14 @@ namespace todo
         {
             client = new DocumentClient(new Uri(ConfigurationManager.AppSettings["endpoint"]), ConfigurationManager.AppSettings["authKey"]);
             CreateDatabaseIfNotExistsAsync().Wait();
-            CreateCollectionIfNotExistsAsync().Wait();
+            CreateCollectionIfNotExistsAsync("/category").Wait();
         }
 
         public static void Initialize(string endpoint, string authKey)
         {
             client = new DocumentClient(new Uri(endpoint), authKey);
             CreateDatabaseIfNotExistsAsync().Wait();
-            CreateCollectionIfNotExistsAsync().Wait();
+            CreateCollectionIfNotExistsAsync("/category").Wait();
         }
 
         public static void Teardown()
@@ -109,11 +109,11 @@ namespace todo
             }
         }
 
-        private static async Task CreateCollectionIfNotExistsAsync()
+        private static async Task CreateCollectionIfNotExistsAsync(string partitionkey)
         {
             try
             {
-                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId));
+                await client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(DatabaseId, CollectionId), new RequestOptions { PartitionKey = new PartitionKey(partitionkey) });
             }
             catch (DocumentClientException e)
             {
@@ -123,7 +123,11 @@ namespace todo
                         UriFactory.CreateDatabaseUri(DatabaseId),
                         new DocumentCollection
                             {
-                                Id = CollectionId
+                                Id = CollectionId,
+                                PartitionKey = new PartitionKeyDefinition
+                                {
+                                    Paths = new System.Collections.ObjectModel.Collection<string>(new List<string>() { partitionkey })
+                                }
                             },
                         new RequestOptions { OfferThroughput = 400 });
                 }
