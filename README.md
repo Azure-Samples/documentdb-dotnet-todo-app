@@ -55,6 +55,7 @@ If you don't have an account, see [Create a database account](https://docs.micro
 For additional ways to deploy this web application to Azure, please refer to the [Deploy a web app in Azure App Service](https://azure.microsoft.com/en-us/documentation/articles/web-sites-deploy/) article which includes information on using Azure Resource Manager (ARM) Templates, Git, MsBuild, PowerShell, Web Deploy, and many more. 
 
 ## About the code
+
 The code included in this sample is intended to get you going with a simple ASP.NET MVC application that connects to Azure Cosmos DB. It is not intended to be a set of best practices on how to build scalable enterprise grade web applications. This is beyond the scope of this quick start sample. 
 
 ## More information
