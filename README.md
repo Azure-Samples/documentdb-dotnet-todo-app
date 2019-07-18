@@ -1,10 +1,17 @@
 ---
-services: cosmos-db
-platforms: dotnet
-author: ryancrawcour
+page_type: sample
+languages:
+  - csharp
+products:
+  - azure
+  - dotnet
+  - aspnet
+  - azure-cosmos-db
+description: "This sample shows you how to use the Microsoft Azure Cosmos DB service to store and access data from an ASP.NET MVC application."
 ---
 
 # Web application development with ASP.NET MVC using Azure Cosmos DB
+
 This sample shows you how to use the Microsoft Azure Cosmos DB service to store and access data from an ASP.NET MVC application hosted on Azure Websites. 
 
 For a complete end-to-end walk-through of creating this application, please refer to the [full tutorial on the Azure Cosmos DB documentation page](https://docs.microsoft.com/azure/cosmos-db/sql-api-dotnet-application).
