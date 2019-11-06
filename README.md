@@ -18,7 +18,7 @@ For a complete end-to-end walk-through of creating this application, please refe
 
 ## Running this sample
 
-1. Before you can run this sample, you must have the following perquisites:
+1. Before you can run this sample, you must have the following prerequisites:
 	- An active Azure Cosmos DB account - If you don't have an account, refer to the [Create a database account](https://docs.microsoft.com/azure/cosmos-db/create-sql-api-dotnet#create-a-database-account) article.
 	- Visual Studio 2013 (or higher).
 	- [Azure SDK for Visual Studio 2013](https://azure.microsoft.com/en-us/downloads/)
