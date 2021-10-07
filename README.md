@@ -10,6 +10,8 @@ products:
 description: "This sample shows you how to use the Microsoft Azure Cosmos DB service to store and access data from an ASP.NET MVC application."
 ---
 
+## This repository has been archived. It uses the Azure Cosmos DB .NET SDK Version 2 which we have recently announced will be deprecated in August 2024. An updated version of this sample using the [Azure Cosmos DB .NET SDK Version 3]((https://github.com/Azure/azure-cosmos-dotnet-v3)) can be found [here](https://github.com/Azure-Samples/cosmos-dotnet-core-todo-app).
+
 # Web application development with ASP.NET MVC using Azure Cosmos DB
 
 This sample shows you how to use the Microsoft Azure Cosmos DB service to store and access data from an ASP.NET MVC application hosted on Azure Websites. 
